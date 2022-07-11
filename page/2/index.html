@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Tom-Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Tom-Blog">
+<meta property="og:url" content="https://tom2855.github.io/page/2/index.html">
+<meta property="og:site_name" content="Tom-Blog">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="Tom2855">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Tom-Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Tom-Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tom2855.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-zhixue-leaks" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/04/zhixue-leaks/" class="article-date">
+  <time class="dt-published" datetime="2021-05-04T15:17:51.000Z" itemprop="datePublished">2021-05-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/">信息技术</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/04/zhixue-leaks/">智学网任意成绩查询漏洞分析</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>时代在发展，社会在进步，考试的方式也与时俱进。现在大多数学校的考试系统都是智学网、好分数一类，自然，这些系统也就成为了学生们又爱又恨的对象。本文是在<code>inSoraSky</code>大佬及其项目<code>Zhixue-K α</code>的启发下，自行发现智学网的漏洞并加以分析的记录，仅供学习参考。</p>
+<h2 id="一-失败的开始"><a href="#一-失败的开始" class="headerlink" title="一  失败的开始"></a>一  失败的开始</h2><p>我来寻找智学网的漏洞主要就是为了能够批量获取到任意指定考试的所有成绩，并没有什么别的想法。所以一开始的思路就是从学生端的成绩查询接口入手，看看有没有越权漏洞。这种分析并不难，经过一番筛选，最后确认学生端获取成绩的API是<code>https://www.zhixue.com/zhixuebao/report/exam/getReportMain</code>。需要的参数也不多，就只要传一个examId上去就好，而examId可以很容易地获取到。</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/zhixue-leaks-1.png"></p>
+<p>但是！该接口使用Cookie鉴权，并且只返回请求者本人的成绩，完全不给你尝试查询别人成绩的机会，这条路宣告终结。</p>
+<h2 id="二-关上的后门"><a href="#二-关上的后门" class="headerlink" title="二  关上的后门"></a>二  关上的后门</h2><p>既然学生端不行，那就换教师端呗。由于老师们的互联网安全意识普遍薄弱，没有及时更改初始密码的意识。再加上智学网的教师账号的初始密码统一为<code>111111</code>，这就给了我一个一窥智学网后院的机会。</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/zhixue-leaks-3-1024x619.jpg"></p>
+<p>到了后院一看，果不其然，有直接获取全年级考试详情并下载的功能，如果能用上这个，那将是非常高效率的。可当我尝试使用的时候……</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/zhixue-leaks-2.png"></p>
+<p>得！</p>
+<p>只能从已经显示出来了的成绩表格入手了，抓包后，发现了又一个接口，很简单，能直接获取一次考试所有人的数据，如下图。</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/zhixue-leaks-4-1024x300.png"></p>
+<p>但当我满心欢喜把这个接口拿到学生权限上做测试时，它302了……</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/zhixue-leaks-5.png"></p>
+<p>什么意思？这个接口对用户权限的认证做得比较好，发现我权限不够，就跳走了……</p>
+<h2 id="三-转机"><a href="#三-转机" class="headerlink" title="三  转机"></a>三  转机</h2><p>颓废了一阵子，忽然看到<code>Zhixue-K α</code>的用户群里晒出的一个东西，考试工具箱，需要年级组长以上的权限访问，可以做很多事情。</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/zhixue-leaks-6-1024x544.png"></p>
+<p>通过社工，拿到了一个校长的账号，进去翻找了一下，“成绩核查”引起了我的注意。里面的功能可以获取任意考生任意科目的成绩，甚至还可以看答题卡的图片，改成绩就别想了。通过抓包，成功得到了又一个成绩获取接口，而且经测试可以在学生权限下使用。至于接口的详细信息，为防止滥用，暂不公开。这是智学网横向鉴权不足的漏洞。</p>
+<h2 id="四-结语"><a href="#四-结语" class="headerlink" title="四  结语"></a>四  结语</h2><p>得到接口后，成绩查询工具的开发已经在进行中，拭目以待吧！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tom2855.github.io/2021/05/04/zhixue-leaks/" data-id="cl5gsgmcl001pnkm37ir5gqul" data-title="智学网任意成绩查询漏洞分析" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-友情链接-2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/04/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5-2/" class="article-date">
+  <time class="dt-published" datetime="2021-05-03T16:33:30.000Z" itemprop="datePublished">2021-05-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/uncategorized/">uncategorized</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/04/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5-2/">&lt;i class=\&#34;fa fa-users\&#34;&gt;&lt;/i&gt; 友情链接</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tom2855.github.io/2021/05/04/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5-2/" data-id="cl5gsgmcy0029nkm348a1h2b2" data-title="&lt;i class=\&#34;fa fa-users\&#34;&gt;&lt;/i&gt; 友情链接" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-友情链接" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/04/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/" class="article-date">
+  <time class="dt-published" datetime="2021-05-03T16:32:00.000Z" itemprop="datePublished">2021-05-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/uncategorized/">uncategorized</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/05/04/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/">&lt;i class=\&#34;fa fa-users\&#34;&gt;&lt;/i&gt; 友情链接</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tom2855.github.io/2021/05/04/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/" data-id="cl5gsgmcw0027nkm30hrb83d1" data-title="&lt;i class=\&#34;fa fa-users\&#34;&gt;&lt;/i&gt; 友情链接" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-is-the-order-a-rabbit" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/04/11/is-the-order-a-rabbit/" class="article-date">
+  <time class="dt-published" datetime="2021-04-11T08:28:54.000Z" itemprop="datePublished">2021-04-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%BC%AB%E7%94%BB/">漫画</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/04/11/is-the-order-a-rabbit/">《请问您今天要来点兔子吗？》</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>这是纯粹因个人爱好而上传的漫画文件，包括《请问您今天要来点兔子吗？》漫画版1至8卷，文件托管在私有服务器上。</p>
+<blockquote>
+<p>“兔子～兔子～”天真地边这么唱着歌，边为了高中入学寻找著寄宿地点而迷路的心爱，意外发现了一间名叫“Rabbit House”的咖啡店。当心爱一边喝着咖啡，一边询问地点时，才发现原来这里就是自己正在寻找的寄宿之家。由于心爱就读的高中规定，必须帮助寄宿的家庭工作以当作借住的报答。于是心爱便自称是智乃的姐姐，成为了“Rabbit House”的店员，展开一段新生活。心爱在店里所遇到的女孩子们，除了又酷又小只的智乃，还有军人气质的理世、沉稳中带有日式气息的千夜，以及庶民派纱路。从此同众多女孩子们展开一段段有趣日常的故事。</p>
+</blockquote>
+<p>中文名</p>
+<p>请问您今天要来点兔子吗？</p>
+<p>译者</p>
+<p>可可亚</p>
+<p>原版名称</p>
+<p>ご注文はうさぎですか？</p>
+<p>地区</p>
+<p>日本</p>
+<p>别名</p>
+<p>Is the order a rabbit?</p>
+<p>连载杂志</p>
+<p>《Manga Time Kirara Max》</p>
+<p>作者</p>
+<p>Koi</p>
+<p>揭载号</p>
+<p>2011年3月号</p>
+<p>类型</p>
+<p>萝莉、百合</p>
+<p>出版社</p>
+<p>芳文社</p>
+<p> </p>
+<p> </p>
+<p>其他出版社</p>
+<p>尖端出版</p>
+<p>Link：<a target="_blank" rel="noopener" href="https://cloud.tomz.top/s/dlUk">私有云</a> Password：9vp913</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tom2855.github.io/2021/04/11/is-the-order-a-rabbit/" data-id="cl5gsgmcf001hnkm39btmcl0d" data-title="《请问您今天要来点兔子吗？》" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-中学生偶像崇拜现象生活化分析" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/04/04/%E4%B8%AD%E5%AD%A6%E7%94%9F%E5%81%B6%E5%83%8F%E5%B4%87%E6%8B%9C%E7%8E%B0%E8%B1%A1%E7%94%9F%E6%B4%BB%E5%8C%96%E5%88%86%E6%9E%90/" class="article-date">
+  <time class="dt-published" datetime="2021-04-03T16:13:53.000Z" itemprop="datePublished">2021-04-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/uncategorized/">uncategorized</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/04/04/%E4%B8%AD%E5%AD%A6%E7%94%9F%E5%81%B6%E5%83%8F%E5%B4%87%E6%8B%9C%E7%8E%B0%E8%B1%A1%E7%94%9F%E6%B4%BB%E5%8C%96%E5%88%86%E6%9E%90/">中学生“偶像崇拜”现象生活化分析</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>想写这个题目是因为这两天的生活中遇到了一些事情，虽然跟自己没多大关系，但偶有所感，正好之前辩论赛也做过这个辩题，现在有了亲身体会，才能说说自己的看法。  </p>
+<h2 id="偶像是什么"><a href="#偶像是什么" class="headerlink" title="偶像是什么"></a>偶像是什么</h2><p>很多资料将偶像定义得较为脱离生活，诸如一些知名人物，这当然没有问题。但是在中学生的大环境下，“偶像”所指的要宽泛很多。因为很多学生发现偶像太遥远了，难以去追求或者接触，于是就把寻找偶像的目光放到了身边，甚至自己的校园中，这也就产生了许多所谓的“女神”“男神”等等。</p>
+<h2 id="偶像寻找的随意性"><a href="#偶像寻找的随意性" class="headerlink" title="偶像寻找的随意性"></a>偶像寻找的随意性</h2><p>在定义中已经提到，中学生的偶像开始呈生活化趋势，向自己的生活迈进。这也就意味着偶像的寻找会变得较为容易，选择的标准也会有所变化。目前我见到的最多的选择标准就是外貌，也没什么遮掩，就是看脸。只要长得好看就行，我不评判这种标准的好或坏，只是以此说明中学生价值观的趋势。<br>当然，也有一些其他的选择标准，比如说成绩，某方面的特殊技能（体育运动、乐器等），但这些方法不是主流，或者说只是辅助标准之一。  </p>
+<h3 id="随意所致的危害"><a href="#随意所致的危害" class="headerlink" title="随意所致的危害"></a>随意所致的危害</h3><p>随意的后果自然就是个体所认为的“偶像”的品质良莠不齐，当然我们不能站在个体的角度看问题，因为每个个体的价值观是不同的。我们所说的危害是指这种风气在宏观上对一个较为封闭的社会环境所造成的不利影响。因为这种风气较易被传播、复制，容易使一群人都与最初的那个个体有相似的价值观与行动准则，这对社会的健康发展是不利的。而且这样做容易导致同类个体间的斗争（所谓争风吃醋）以及不同类个体间的斗争（两个“偶像”的追求者团体间的摩擦），增加了社会不稳定因素。  </p>
+<h2 id="偶像崇拜的影响"><a href="#偶像崇拜的影响" class="headerlink" title="偶像崇拜的影响"></a>偶像崇拜的影响</h2><p>上文已经讲到了偶像选择中随意性对追求者本身的影响，现在再来谈谈对所谓“偶像”自己的影响。<br>试想一个个体，因为某些特质受到了某些异性个体的喜爱，这本身就对个体本身有所干扰，至于干扰的良性与恶性，主要取决于个体的态度和追求者的行为。如果个体将这种追求作为自己前进的动力，提升自我，那是皆大欢喜。但如果因为这些追求者而居高自傲，目中无人，势必会遭到同类、追求者甚至于社会本身的排斥。<br>再看追求者，追求这种行为可大可小，可以仅仅是心中的一个念头，也可以是身体力行的大动作，对追求者和被追求者都有着不同的影响，或正或负，或大或小。我见过有些追求者，只是为了看被追求者几眼，趁一点点空隙时间“跋山涉水”去看，浪费了自己宝贵的时间。  </p>
+<h2 id="一些反向思考"><a href="#一些反向思考" class="headerlink" title="一些反向思考"></a>一些反向思考</h2><p>我曾经认为一些被崇拜者的行为是不可理解的，许多自傲的行为是不对的。但我现在发现其实情有可原，多数情况下这种现象发生在追求者的行为过激或达到了被崇拜者心中的那根线的情况，这样的正反馈循环不断放大偶像崇拜的影响，直到崩溃。这种现象的双向多个体性，使这个封闭社会环境的风气，有点变了味。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tom2855.github.io/2021/04/04/%E4%B8%AD%E5%AD%A6%E7%94%9F%E5%81%B6%E5%83%8F%E5%B4%87%E6%8B%9C%E7%8E%B0%E8%B1%A1%E7%94%9F%E6%B4%BB%E5%8C%96%E5%88%86%E6%9E%90/" data-id="cl5gsgmcp001xnkm3dpvxeeu6" data-title="中学生“偶像崇拜”现象生活化分析" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-band-1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/28/band-1/" class="article-date">
+  <time class="dt-published" datetime="2021-03-28T07:57:11.000Z" itemprop="datePublished">2021-03-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/">生活记录</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/28/band-1/">乐队日记 · 一    贫穷是最大的障碍</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>原EFB乐队经过数次改组，终于改名为PigeonBunny，准备在今年的“五月的鲜花”艺术节上大放光彩。表演的曲目是《起风了》。</p>
+<p>很久很久以前，乐队纯粹为了好玩组建起来，总共五六个人，两三个是现学现卖，当时的目标也是在艺术节上，演《春风十里》。练了几个月，在班上演出，勉勉强强能听，但也只是能听的水平。于是就激发了换歌、改组的想法。</p>
+<p>换歌这件事吵了有一两个星期，本来说换《千本樱》，用中文填词，谱子都制好了，我还用A3打了靠近200张谱子。结果朱荣骐一个人“搞不定”，闹了几天情绪，又要换歌，最后敲定《起风了》。</p>
+<p>这首歌好听是好听，但是带来了极大的麻烦。这首歌是Gb大调，本身调性就比较难，且副歌部分基本都要翻一个八度上去，开头部分又要降一个八度，音域很广，一个主唱很难Hold住。所以就要多个主唱，还要男女基本均衡，这就多了三四个人。乐队总人数就奔10去了。</p>
+<p>这人一多不要紧，排练就费事了，光是这么多人需要的空间就不小，再算上餐饮，是一笔不小的开销。</p>
+<p>接下来是最核心的问题。乐队人数少的时候各种设备凑合凑合也就能用，现场的音响系统也都能应付，出现错拍的几率也不大。但靠近十个人的演出，难免会出现配合问题，这首歌的主旋律大部分又跟小节不对齐，搞不好就错拍。错拍就错拍吧，好歹能听。问题是听不见！这么多乐器话筒，需要的音频通道数是极其可怕的，下表展示的是对通道的保守估计。</p>
+<p>通道名</p>
+<p>数量</p>
+<p>人员</p>
+<p>备注</p>
+<p>人声</p>
+<p>4</p>
+<p>陆旖辰、王祖甜，孙一铭、张宁泓</p>
+<p>需要话筒4</p>
+<p>电吉他</p>
+<p>1</p>
+<p>朱荣骐</p>
+<p> </p>
+<p>木吉他</p>
+<p>1</p>
+<p>孙一铭</p>
+<p>需要拾音器</p>
+<p>贝斯</p>
+<p>1</p>
+<p>余少翔</p>
+<p> </p>
+<p>键盘</p>
+<p>2</p>
+<p>马宇恒、马晨源</p>
+<p>可能需要转接器</p>
+<p>架子鼓</p>
+<p>1</p>
+<p>罗志远</p>
+<p>需要话筒1</p>
+<p>总计</p>
+<p>10</p>
+<p>9人</p>
+<p>话筒及配套设施5套</p>
+<p>10通道对于一些专业演出动辄64、128通道的现场承载能力可能不算什么，但对于一支校园乐队，是巨大的问题。学校在艺术节是绝对不可能提供给你10个通道的，可能连5个话筒都困难。这会带来什么？你的声音没办法通过现场音响出去。自带音响？对于露天演出来说，音量太小，而且各人的音响的延迟不同，可能造成严重的演出事故，最重要的，成本问题！</p>
+<p>所以另一个我提出的解决方案就是现场混音，再单通道送入现场功放，这样的成本相对较低，而且能够给我们更棒的控场权。</p>
+<p>还有人提出要加弦乐，但是以我们的能力，只能找到小提琴手。而小提琴Solo的声音……可以参考zrq的唢呐。但要我们找管弦乐团…如果我中彩票了可能会这么干。所以要弦乐只能放伴奏带，专业一点叫Program，可Program是死的，人是活的，不能让Program跟着乐手来，只能让乐手跟着Program，否则会发生严重的错拍。这就必须要有返听设备，也就是实时监听，内有Click，提示乐手速度与乐曲进度。</p>
+<p>但这样算下来，调音台+一堆线材+9个人的返听。成本要上天的。所以只能从简，返听我打算就用有线耳机，加耳机分线器和延长线，希望能用吧。</p>
+<p>清明第一次排练，看看效果吧，这些费用也得众筹。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tom2855.github.io/2021/03/28/band-1/" data-id="cl5gsgmc2000vnkm3gh7g1w23" data-title="乐队日记 · 一    贫穷是最大的障碍" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B9%90%E9%98%9F/" rel="tag">乐队</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-python-flask-api-hitokoto" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/15/python-flask-api-hitokoto/" class="article-date">
+  <time class="dt-published" datetime="2021-03-15T13:47:43.000Z" itemprop="datePublished">2021-03-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/">信息技术</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/15/python-flask-api-hitokoto/">Python Flask 编写API  -  一言篇</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>动漫也好、小说也好、网络也好，不论在哪里，我们总会看到有那么一两个句子能穿透你的心。我们把这些句子汇聚起来，形成一言网络，以传递更多的感动。如果可以，我们希望我们没有停止服务的那一天。 —— 一言(Hitokoto.cn)</p>
+</blockquote>
+<h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>这是来自一言网站的一段话，我觉得这就是许多IT死宅的浪漫吧。最近沉迷于博客相关的东西，自然也就想为博客社区做做贡献，四下翻翻，发现自己也没啥可贡献的（笑），于是乎就有了开发自己的API服务的想法。凡事讲究从易到难，看看那些参数一大堆，认证繁琐的东西，我还是先从稍微简单的一言开始吧。</p>
+<h2 id="什么是一言"><a href="#什么是一言" class="headerlink" title="什么是一言"></a>什么是一言</h2><blockquote>
+<p>简单来说，一言指的就是一句话，可以是动漫中的台词，也可以是网络上的各种小段子。 或是感动，或是开心，有或是单纯的回忆。来到这里，留下你所喜欢的那一句句话，与大家分享，这就是一言存在的目的。 一言(Hitokoto.cn)</p>
+</blockquote>
+<p>一言实际上就是让你的博客变得更加高大上的一句话，WordPress自带的Hello Dolly插件的作用也与之类似。</p>
+<h2 id="架构选择"><a href="#架构选择" class="headerlink" title="架构选择"></a>架构选择</h2><p>要开发这种后端作用远大于前端的应用，选择就非常多了。有Spring Boot ，Go，Python Flask，甚至PHP也行。但综合考虑我的需求和自己的编程水平，我最终选择了Python Flask，因为我对Python稍微熟悉一点，且以后将要实现的更多功能利用Python里的库可以非常方便地实现。</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/03/flask-1024x401.png"></p>
+<h2 id="需求与前置工作"><a href="#需求与前置工作" class="headerlink" title="需求与前置工作"></a>需求与前置工作</h2><p>设想是这样的：访问一个URL，直接得到一句一言，并可以通过更改请求的方式得到出处。听起来很简单是吧，实现起来我可是处处掉坑。</p>
+<p>要建立一言API，一言本身肯定是最重要的。本来这将会成为最困难的一部分，我甚至已经做好了写爬虫的准备，但感谢Hitokoto.cn，将他们的公共API的一言数据全部公开，省去了我一大麻烦。这里给出他们的一言仓库链接，大家可以自行下载。</p>
+<p>[github repo&#x3D;”hitokoto-osc&#x2F;sentences-bundle”]</p>
+<p>[github repo&#x3D;”mashirozx&#x2F;Sakura”]</p>
+<p>至于开发环境，就是一般的Python开发环境，我这里在Windows下用PyCharm开发，然后部署到Linux服务器上。</p>
+<h2 id="初识Flask"><a href="#初识Flask" class="headerlink" title="初识Flask"></a>初识Flask</h2><p>Flask 是一个使用 Python 编写的轻量级 Web 应用程序框架，用于这种没什么前端需求的应用再合适不过。使用很简单，但性能就不是很好。经过后来的实测，长时100QPS或短期1000QPS以上就会炸，在初期小流量下还行。后期可能会用Go重写。</p>
+<p>以下提供一个可以运行的最小Flask例程，对于这种开发，哪怕不求甚解也行，反正临时用用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hello_world</span>():</span><br><span class="line">  <span class="keyword">return</span> <span class="string">&#x27;Hello World&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">  app.run(host=<span class="string">&#x27;0.0.0.0&#x27;</span>,port=<span class="number">5000</span>, debug=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p><em>不建议将<code>app.run()</code>写法用于生产环境中</em></p>
+<h2 id="敷衍的开发过程"><a href="#敷衍的开发过程" class="headerlink" title="敷衍的开发过程"></a>敷衍的开发过程</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/hitokoto/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_main</span>():</span><br><span class="line">  conn = sqlite3.connect(<span class="string">&#x27;DB.db&#x27;</span>)</span><br><span class="line">  hito = conn.execute(<span class="string">&quot;&quot;&quot;select * from hitokoto order by random() limit 1\&#x27;).fetchone()&quot;&quot;&quot;</span>)</span><br><span class="line">  logging.info(Hitokoto  + <span class="built_in">str</span>(hito[<span class="number">0</span>]))</span><br><span class="line">  <span class="keyword">return</span> <span class="string">&quot;&#123;&#125; ——「&#123;&#125;」&quot;</span>.<span class="built_in">format</span>(hito[<span class="number">1</span>], hito[<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
+
+<p>这里给出我使用的处理函数，很简单，从SQLite数据库中随机选出一条记录，经格式化后直接返回，没有任何美化或者格式上的东西，这些就交给前端吧。（好像前端后端都是我）另给出一种适合用于生产环境下的服务运行写法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">  server = pywsgi.WSGIServer((<span class="string">&#x27;0.0.0.0&#x27;</span>, <span class="number">50000</span>), app)</span><br><span class="line">  server.serve_forever() </span><br></pre></td></tr></table></figure>
+
+<p>至此，这个API也基本能用了，但性能不忍直视。等哪天有空，Golang重写，换数据库，还可能搞分布式，但是不一定写博文。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tom2855.github.io/2021/03/15/python-flask-api-hitokoto/" data-id="cl5gsgmcj001lnkm3ax7g994n" data-title="Python Flask 编写API  -  一言篇" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/API/" rel="tag">API</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flask/" rel="tag">Flask</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hitokoto/" rel="tag">Hitokoto</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-api-2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/13/api-2/" class="article-date">
+  <time class="dt-published" datetime="2021-03-13T07:41:43.000Z" itemprop="datePublished">2021-03-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/uncategorized/">uncategorized</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/13/api-2/">&lt;i class=\&#34;fa fa-link\&#34;&gt;&lt;/i&gt; API</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tom2855.github.io/2021/03/13/api-2/" data-id="cl5gsgmby000pnkm31mn6cnzo" data-title="&lt;i class=\&#34;fa fa-link\&#34;&gt;&lt;/i&gt; API" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-api" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/13/api/" class="article-date">
+  <time class="dt-published" datetime="2021-03-13T07:41:20.000Z" itemprop="datePublished">2021-03-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/uncategorized/">uncategorized</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/13/api/">&lt;i class=\&#34;fa fa-link\&#34;&gt;&lt;/i&gt; API</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tom2855.github.io/2021/03/13/api/" data-id="cl5gsgmbz000rnkm30mccdsj1" data-title="&lt;i class=\&#34;fa fa-link\&#34;&gt;&lt;/i&gt; API" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-weekly-2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/03/07/weekly-2/" class="article-date">
+  <time class="dt-published" datetime="2021-03-07T06:29:39.000Z" itemprop="datePublished">2021-03-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%91%A8%E8%AE%B0/">周记</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/03/07/weekly-2/">周记 · 二  理发，从搓麻将到经商之道</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>周末回村里去看望老人，抽空出来理发，这家理发店我们家里人经常来，跟店主挺熟的。</p>
+<p>过来时已是午饭后，人还挺多，有好几个“做头”的。既然人多，就等等呗，等着等着，毕竟都是同乡，客人们就用熟悉的家乡方言聊上了。等到我进去，正在聊某个好赌的大娘的故事。早上送完孩子就不回去了，带着钱就坐到麻将馆里。里面菜包肉包不限量供应，连早饭都不用吃。还有什么起步三百块三千块的，都是些奇人异事。</p>
+<p>毕竟刚过春节，许多人回乡，在家没事干，于是出去晃，这不就看到了一麻将馆。这人是一个生意人，让朋友开着个面包车，就停在麻将馆门口，火都没熄。打了三天麻将，前两天加起来输了150多万，结果第三天赢了400万。这些事儿居然发生在一个普通村庄的小麻将馆里，你要说这事情发生在某国外大赌场我都信。 聊完好赌的大娘，就聊到一位因为家庭矛盾而服毒自杀的人。说到他身边有一个人曾向这里一位等待的顾客的父亲借过钱，当时“XXX！借我多少多少钱，马上回来就还你！”结果到了年底了还没见影子呢。到了年三十，上门要钱，“这我哪有呢！”接下来就是一番问候先人的传统艺能。 这位顾客又谈到自己曾经借过一位亲戚的钱，为了年底准时给工人发工资。一等手上有钱就赶紧还回去，人家说不用着急不要着急，他就说“比起让你开口要，不如早点还。有借有还，再借不难嘛！”语言虽然朴素平实，却深深体现了一个生意人的操守。 又说到一位包工头，年前还欠工人7000元工资，工人说不着急，结果他就拖到了年底。腊月二十，工人给包工头打了十几二十个电话没人接，最后一个电话去到公司，公司二话没说给工头开了5000元的罚单，责令赶紧结工资。几天下了工头把这事情忘了，工人又是一个电话，又一张5000的罚单。本来7000的工资，现在不仅要结，又自己搭上一万，何必呢？ 这篇周记很水，也没啥质量，精力都用在学校作文了，只是做个记录，看人间百态呗。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tom2855.github.io/2021/03/07/weekly-2/" data-id="cl5gsgmcm001tnkm350wccjw5" data-title="周记 · 二  理发，从搓麻将到经商之道" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/">&laquo; zurück</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">weiter &raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Kategorien</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/uncategorized/">uncategorized</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/">信息技术</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%91%A8%E8%AE%B0/">周记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BC%AB%E7%94%BB/">漫画</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/">生活记录</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/API/" rel="tag">API</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flask/" rel="tag">Flask</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hitokoto/" rel="tag">Hitokoto</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPv6/" rel="tag">IPv6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E5%9B%BD%E7%A7%BB%E5%8A%A8/" rel="tag">中国移动</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B9%90%E9%98%9F/" rel="tag">乐队</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/Flask/" style="font-size: 10px;">Flask</a> <a href="/tags/Hitokoto/" style="font-size: 10px;">Hitokoto</a> <a href="/tags/IPv6/" style="font-size: 10px;">IPv6</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/%E4%B8%AD%E5%9B%BD%E7%A7%BB%E5%8A%A8/" style="font-size: 10px;">中国移动</a> <a href="/tags/%E4%B9%90%E9%98%9F/" style="font-size: 20px;">乐队</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/07/11/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/25/domain-tomzi-net/">域名tomzi.net投入使用</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/15/life-puzzle-solve/">Zt&#39;s Blog LIFE PUZZLE 解谜记录</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/26/2021-science-competition/">2021年江苏省全民科学素质大赛参赛日志</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/18/enable-cmcc-ipv6/">移动家宽IPv6开启及配置实录</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 Tom2855<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -4,19 +4,28 @@
   <meta charset="utf-8">
   
   
-  <title>Hello World | Tom-Blog</title>
+  <title>移动家宽IPv6开启及配置实录 | Tom-Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+  <meta name="description" content="家里是中国移动的200M家宽，便宜是便宜，但是死活不给IPv4公网IP，这给我带来了极大的不便，但折腾了半天无果，也就放弃了。最近新增了Oran.me的一台香港cn2的VPS节点，没有IPv4公网IP，但是提供IPv6 IP，当我尝试连接SSH时，结果报了个“Address Unreachable”。忽然想起，我还没有开启IPv6……这也是这篇文章的由来。 得益于各类文件的要求，三大运营商基本都提">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="https://tom2855.github.io/2022/07/11/hello-world/index.html">
+<meta property="og:title" content="移动家宽IPv6开启及配置实录">
+<meta property="og:url" content="https://tom2855.github.io/2021/05/18/enable-cmcc-ipv6/index.html">
 <meta property="og:site_name" content="Tom-Blog">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="家里是中国移动的200M家宽，便宜是便宜，但是死活不给IPv4公网IP，这给我带来了极大的不便，但折腾了半天无果，也就放弃了。最近新增了Oran.me的一台香港cn2的VPS节点，没有IPv4公网IP，但是提供IPv6 IP，当我尝试连接SSH时，结果报了个“Address Unreachable”。忽然想起，我还没有开启IPv6……这也是这篇文章的由来。 得益于各类文件的要求，三大运营商基本都提">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-07-11T13:09:00.049Z">
-<meta property="article:modified_time" content="2022-07-11T13:09:00.049Z">
+<meta property="og:image" content="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-1-1024x766.png">
+<meta property="og:image" content="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-2.png">
+<meta property="og:image" content="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-3-1024x786.png">
+<meta property="og:image" content="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-4-1024x511.png">
+<meta property="og:image" content="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-5.png">
+<meta property="og:image" content="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-6-1024x466.png">
+<meta property="article:published_time" content="2021-05-18T14:06:04.000Z">
+<meta property="article:modified_time" content="2022-07-11T13:36:43.442Z">
 <meta property="article:author" content="Tom2855">
+<meta property="article:tag" content="IPv6">
+<meta property="article:tag" content="中国移动">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-1-1024x766.png">
   
     <link rel="alternate" href="/atom.xml" title="Tom-Blog" type="application/atom+xml">
   
@@ -73,12 +82,16 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-enable-cmcc-ipv6" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/07/11/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2022-07-11T13:09:00.049Z" itemprop="datePublished">2022-07-11</time>
+    <a href="/2021/05/18/enable-cmcc-ipv6/" class="article-date">
+  <time class="dt-published" datetime="2021-05-18T14:06:04.000Z" itemprop="datePublished">2021-05-18</time>
 </a>
     
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/">信息技术</a>
+  </div>
+
   </div>
   <div class="article-inner">
     
@@ -87,7 +100,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      Hello World
+      移动家宽IPv6开启及配置实录
     </h1>
   
 
@@ -95,37 +108,53 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+        <p>家里是中国移动的200M家宽，便宜是便宜，但是死活不给IPv4公网IP，这给我带来了极大的不便，但折腾了半天无果，也就放弃了。最近新增了Oran.me的一台香港cn2的VPS节点，没有IPv4公网IP，但是提供IPv6 IP，当我尝试连接SSH时，结果报了个“Address Unreachable”。忽然想起，我还没有开启IPv6……这也是这篇文章的由来。</p>
+<p>得益于各类文件的要求，三大运营商基本都提供了IPv6接入，只是一般不会自动给你配置好，就算配置好了内网也无法承载。所以我的任务就是配置一下光猫和路由器。</p>
+<p>要进入光猫的后台，就必须要管理员账号密码，否则没有权限修改连接，至于怎么获取，差别很大，有的就是默认密码，有的甚至还要给光猫重刷固件，说起来又是血泪史啊……这里就先按下不表。</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-1-1024x766.png"></p>
+<p>进入光猫后台，配置其实不难，主要就是启用WAN侧的IPv6连接和打开LAN侧的地址分配。</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-2.png"></p>
+<p>有些光猫允许直接修改配置，那就直接将协议类型改为 IPv4&#x2F;IPv6 就可以了，有的不允许修改，那就记下所有配置，然后新建一个连接，并将配置抄回去，然后更改协议类型，最后删去原来的连接。</p>
+<p>[admonition]不要照抄我的配置，配置因人而异，配置错误可能导致网络故障。[&#x2F;admonition]</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-3-1024x786.png"></p>
+<p>再配置一下IPv6的DHCP就完成了。</p>
+<p>可是！！！当我满怀欢喜打开浏览器测试的时候……</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-4-1024x511.png"></p>
+<p>经过一番捣鼓，最后发现路由器有IPv6而电脑没有……也就是说，还得配置一下路由器的DHCPv6。</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-5.png"></p>
+<p>这里有三种方式，“Native”和“静态IPv6”适合路由器拨号的方式，而“NAT6”适合光猫拨号的方式，根据实际情况选择。</p>
+<p>再进行测试，goooood~</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/enable-cmcc-ipv6-6-1024x466.png"></p>
+<p>未来博客会支持纯IPv6访问，大概率通过HE接入，并加入负载均衡，挖坑坑坑坑坑。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tom2855.github.io/2022/07/11/hello-world/" data-id="cl5grqhwr0000y0m3f5zwfic8" data-title="Hello World" class="article-share-link">Teilen</a>
+      <a data-url="https://tom2855.github.io/2021/05/18/enable-cmcc-ipv6/" data-id="cl5gsgmc70012nkm392nq83v7" data-title="移动家宽IPv6开启及配置实录" class="article-share-link">Teilen</a>
       
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IPv6/" rel="tag">IPv6</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B8%AD%E5%9B%BD%E7%A7%BB%E5%8A%A8/" rel="tag">中国移动</a></li></ul>
+
     </footer>
   </div>
   
     
 <nav id="article-nav">
   
+    <a href="/2021/05/26/2021-science-competition/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          2021年江苏省全民科学素质大赛参赛日志
+        
+      </div>
+    </a>
   
-    <a href="/2021/06/25/domain-tomzi-net/" id="article-nav-older" class="article-nav-link-wrap">
+  
+    <a href="/2021/05/16/%E4%B9%90%E9%98%9F%E6%97%A5%E8%AE%B0-%C2%B7-%E4%BA%8C-%E7%BB%84%E7%BB%87%E9%97%AE%E9%A2%98%E5%A4%A7%E4%BA%8E%E6%8A%80%E6%9C%AF%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Älter</strong>
-      <div class="article-nav-title">域名tomzi.net投入使用</div>
+      <div class="article-nav-title">乐队日记 · 二    组织问题大于技术问题</div>
     </a>
   
 </nav>
