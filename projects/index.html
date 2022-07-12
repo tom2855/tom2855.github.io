@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tomzi.net","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.12.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Suche...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="API - 一言此API在hitokoto.cn的启发下编写，使用Flask + SQLite做后端，性能不佳。一言文本数据同样来自hitokoto.cn。第一版于2021年3月中旬发布，虽然没什么人用。技术细节见API服务。 API - 必应每日一图此API紧跟着一言API发布，技术含量不高，仅仅是为了方便而设立，同样于2021年3月中旬启用。技术细节见API服务。 智学网成绩查询（ZhiSTU">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Projects">
+<meta property="og:url" content="https://tomzi.net/projects/index.html">
+<meta property="og:site_name" content="Tom-Blog">
+<meta property="og:description" content="API - 一言此API在hitokoto.cn的启发下编写，使用Flask + SQLite做后端，性能不佳。一言文本数据同样来自hitokoto.cn。第一版于2021年3月中旬发布，虽然没什么人用。技术细节见API服务。 API - 必应每日一图此API紧跟着一言API发布，技术含量不高，仅仅是为了方便而设立，同样于2021年3月中旬启用。技术细节见API服务。 智学网成绩查询（ZhiSTU">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-05T10:00:39.000Z">
+<meta property="article:modified_time" content="2022-07-11T13:36:43.414Z">
+<meta property="article:author" content="Tom2855">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tomzi.net/projects/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-cn","comments":"","permalink":"https://tomzi.net/projects/index.html","path":"projects/index.html","title":"Projects"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Projects | Tom-Blog
+</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Navigationsleiste an/ausschalten" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tom-Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Inhaltsverzeichnis
+        </li>
+        <li class="sidebar-nav-overview">
+          Übersicht
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#API-%E4%B8%80%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">API - 一言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API-%E5%BF%85%E5%BA%94%E6%AF%8F%E6%97%A5%E4%B8%80%E5%9B%BE"><span class="nav-number">2.</span> <span class="nav-text">API - 必应每日一图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%99%BA%E5%AD%A6%E7%BD%91%E6%88%90%E7%BB%A9%E6%9F%A5%E8%AF%A2%EF%BC%88ZhiSTUDY%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">智学网成绩查询（ZhiSTUDY）</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Tom2855</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">Artikel</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">Kategorien</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">schlagwörter</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="zh-cn"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">Projects
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      <div class="post-body">
+          <h2 id="API-一言"><a href="#API-一言" class="headerlink" title="API - 一言"></a>API - 一言</h2><p>此API在<code>hitokoto.cn</code>的启发下编写，使用Flask + SQLite做后端，性能不佳。一言文本数据同样来自<code>hitokoto.cn</code>。第一版于2021年3月中旬发布，虽然没什么人用。技术细节见<a target="_blank" rel="noopener" href="https://tomz.top/api">API服务</a>。</p>
+<h2 id="API-必应每日一图"><a href="#API-必应每日一图" class="headerlink" title="API - 必应每日一图"></a>API - 必应每日一图</h2><p>此API紧跟着一言API发布，技术含量不高，仅仅是为了方便而设立，同样于2021年3月中旬启用。技术细节见<a target="_blank" rel="noopener" href="https://tomz.top/api/">API服务</a>。</p>
+<h2 id="智学网成绩查询（ZhiSTUDY）"><a href="#智学网成绩查询（ZhiSTUDY）" class="headerlink" title="智学网成绩查询（ZhiSTUDY）"></a>智学网成绩查询（ZhiSTUDY）</h2><p>一个与<code>inSorasky</code>大佬的<code>Zhixue-K α</code>项目功能基本相同的项目，但实现方法和接口不同。目前仍在开发，已完成后端的接口Demo，答题卡查看、数据整合、下载以及前端页面还未完成。</p>
+<p>2021年5月4日：找到接口，完成Python Demo。</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tom2855</span>
+</div>
+  <div class="powered-by">Erstellt mit  <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
