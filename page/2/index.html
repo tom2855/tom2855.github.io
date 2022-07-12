@@ -59,10 +59,10 @@
         
           <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tom2855.github.io"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://tom2855.github.io"></form>
       </div>
     </div>
   </div>
@@ -70,66 +70,6 @@
 
       <div class="outer">
         <section id="main">
-  
-    <article id="post-zhixue-leaks" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/04/zhixue-leaks/" class="article-date">
-  <time class="dt-published" datetime="2021-05-04T15:17:51.000Z" itemprop="datePublished">2021-05-04</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/">信息技术</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/04/zhixue-leaks/">智学网任意成绩查询漏洞分析</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>时代在发展，社会在进步，考试的方式也与时俱进。现在大多数学校的考试系统都是智学网、好分数一类，自然，这些系统也就成为了学生们又爱又恨的对象。本文是在<code>inSoraSky</code>大佬及其项目<code>Zhixue-K α</code>的启发下，自行发现智学网的漏洞并加以分析的记录，仅供学习参考。</p>
-<h2 id="一-失败的开始"><a href="#一-失败的开始" class="headerlink" title="一  失败的开始"></a>一  失败的开始</h2><p>我来寻找智学网的漏洞主要就是为了能够批量获取到任意指定考试的所有成绩，并没有什么别的想法。所以一开始的思路就是从学生端的成绩查询接口入手，看看有没有越权漏洞。这种分析并不难，经过一番筛选，最后确认学生端获取成绩的API是<code>https://www.zhixue.com/zhixuebao/report/exam/getReportMain</code>。需要的参数也不多，就只要传一个examId上去就好，而examId可以很容易地获取到。</p>
-<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/zhixue-leaks-1.png"></p>
-<p>但是！该接口使用Cookie鉴权，并且只返回请求者本人的成绩，完全不给你尝试查询别人成绩的机会，这条路宣告终结。</p>
-<h2 id="二-关上的后门"><a href="#二-关上的后门" class="headerlink" title="二  关上的后门"></a>二  关上的后门</h2><p>既然学生端不行，那就换教师端呗。由于老师们的互联网安全意识普遍薄弱，没有及时更改初始密码的意识。再加上智学网的教师账号的初始密码统一为<code>111111</code>，这就给了我一个一窥智学网后院的机会。</p>
-<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/zhixue-leaks-3-1024x619.jpg"></p>
-<p>到了后院一看，果不其然，有直接获取全年级考试详情并下载的功能，如果能用上这个，那将是非常高效率的。可当我尝试使用的时候……</p>
-<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/zhixue-leaks-2.png"></p>
-<p>得！</p>
-<p>只能从已经显示出来了的成绩表格入手了，抓包后，发现了又一个接口，很简单，能直接获取一次考试所有人的数据，如下图。</p>
-<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/zhixue-leaks-4-1024x300.png"></p>
-<p>但当我满心欢喜把这个接口拿到学生权限上做测试时，它302了……</p>
-<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/zhixue-leaks-5.png"></p>
-<p>什么意思？这个接口对用户权限的认证做得比较好，发现我权限不够，就跳走了……</p>
-<h2 id="三-转机"><a href="#三-转机" class="headerlink" title="三  转机"></a>三  转机</h2><p>颓废了一阵子，忽然看到<code>Zhixue-K α</code>的用户群里晒出的一个东西，考试工具箱，需要年级组长以上的权限访问，可以做很多事情。</p>
-<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/05/zhixue-leaks-6-1024x544.png"></p>
-<p>通过社工，拿到了一个校长的账号，进去翻找了一下，“成绩核查”引起了我的注意。里面的功能可以获取任意考生任意科目的成绩，甚至还可以看答题卡的图片，改成绩就别想了。通过抓包，成功得到了又一个成绩获取接口，而且经测试可以在学生权限下使用。至于接口的详细信息，为防止滥用，暂不公开。这是智学网横向鉴权不足的漏洞。</p>
-<h2 id="四-结语"><a href="#四-结语" class="headerlink" title="四  结语"></a>四  结语</h2><p>得到接口后，成绩查询工具的开发已经在进行中，拭目以待吧！</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://tom2855.github.io/2021/05/04/zhixue-leaks/" data-id="cl5gsgmcl001pnkm37ir5gqul" data-title="智学网任意成绩查询漏洞分析" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
   
     <article id="post-友情链接-2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
@@ -161,7 +101,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tom2855.github.io/2021/05/04/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5-2/" data-id="cl5gsgmcy0029nkm348a1h2b2" data-title="&lt;i class=\&#34;fa fa-users\&#34;&gt;&lt;/i&gt; 友情链接" class="article-share-link">Share</a>
+      <a data-url="https://tom2855.github.io/2021/05/04/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5-2/" data-id="cl5gsgmcy0029nkm348a1h2b2" data-title="&lt;i class=\&#34;fa fa-users\&#34;&gt;&lt;/i&gt; 友情链接" class="article-share-link">Teilen</a>
       
       
       
@@ -203,7 +143,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tom2855.github.io/2021/05/04/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/" data-id="cl5gsgmcw0027nkm30hrb83d1" data-title="&lt;i class=\&#34;fa fa-users\&#34;&gt;&lt;/i&gt; 友情链接" class="article-share-link">Share</a>
+      <a data-url="https://tom2855.github.io/2021/05/04/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5/" data-id="cl5gsgmcw0027nkm30hrb83d1" data-title="&lt;i class=\&#34;fa fa-users\&#34;&gt;&lt;/i&gt; 友情链接" class="article-share-link">Teilen</a>
       
       
       
@@ -274,7 +214,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tom2855.github.io/2021/04/11/is-the-order-a-rabbit/" data-id="cl5gsgmcf001hnkm39btmcl0d" data-title="《请问您今天要来点兔子吗？》" class="article-share-link">Share</a>
+      <a data-url="https://tom2855.github.io/2021/04/11/is-the-order-a-rabbit/" data-id="cl5gsgmcf001hnkm39btmcl0d" data-title="《请问您今天要来点兔子吗？》" class="article-share-link">Teilen</a>
       
       
       
@@ -322,7 +262,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tom2855.github.io/2021/04/04/%E4%B8%AD%E5%AD%A6%E7%94%9F%E5%81%B6%E5%83%8F%E5%B4%87%E6%8B%9C%E7%8E%B0%E8%B1%A1%E7%94%9F%E6%B4%BB%E5%8C%96%E5%88%86%E6%9E%90/" data-id="cl5gsgmcp001xnkm3dpvxeeu6" data-title="中学生“偶像崇拜”现象生活化分析" class="article-share-link">Share</a>
+      <a data-url="https://tom2855.github.io/2021/04/04/%E4%B8%AD%E5%AD%A6%E7%94%9F%E5%81%B6%E5%83%8F%E5%B4%87%E6%8B%9C%E7%8E%B0%E8%B1%A1%E7%94%9F%E6%B4%BB%E5%8C%96%E5%88%86%E6%9E%90/" data-id="cl5gsgmcp001xnkm3dpvxeeu6" data-title="中学生“偶像崇拜”现象生活化分析" class="article-share-link">Teilen</a>
       
       
       
@@ -407,7 +347,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tom2855.github.io/2021/03/28/band-1/" data-id="cl5gsgmc2000vnkm3gh7g1w23" data-title="乐队日记 · 一    贫穷是最大的障碍" class="article-share-link">Share</a>
+      <a data-url="https://tom2855.github.io/2021/03/28/band-1/" data-id="cl5gsgmc2000vnkm3gh7g1w23" data-title="乐队日记 · 一    贫穷是最大的障碍" class="article-share-link">Teilen</a>
       
       
       
@@ -477,7 +417,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tom2855.github.io/2021/03/15/python-flask-api-hitokoto/" data-id="cl5gsgmcj001lnkm3ax7g994n" data-title="Python Flask 编写API  -  一言篇" class="article-share-link">Share</a>
+      <a data-url="https://tom2855.github.io/2021/03/15/python-flask-api-hitokoto/" data-id="cl5gsgmcj001lnkm3ax7g994n" data-title="Python Flask 编写API  -  一言篇" class="article-share-link">Teilen</a>
       
       
       
@@ -521,7 +461,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tom2855.github.io/2021/03/13/api-2/" data-id="cl5gsgmby000pnkm31mn6cnzo" data-title="&lt;i class=\&#34;fa fa-link\&#34;&gt;&lt;/i&gt; API" class="article-share-link">Share</a>
+      <a data-url="https://tom2855.github.io/2021/03/13/api-2/" data-id="cl5gsgmby000pnkm31mn6cnzo" data-title="&lt;i class=\&#34;fa fa-link\&#34;&gt;&lt;/i&gt; API" class="article-share-link">Teilen</a>
       
       
       
@@ -563,7 +503,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tom2855.github.io/2021/03/13/api/" data-id="cl5gsgmbz000rnkm30mccdsj1" data-title="&lt;i class=\&#34;fa fa-link\&#34;&gt;&lt;/i&gt; API" class="article-share-link">Share</a>
+      <a data-url="https://tom2855.github.io/2021/03/13/api/" data-id="cl5gsgmbz000rnkm30mccdsj1" data-title="&lt;i class=\&#34;fa fa-link\&#34;&gt;&lt;/i&gt; API" class="article-share-link">Teilen</a>
       
       
       
@@ -608,7 +548,63 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://tom2855.github.io/2021/03/07/weekly-2/" data-id="cl5gsgmcm001tnkm350wccjw5" data-title="周记 · 二  理发，从搓麻将到经商之道" class="article-share-link">Share</a>
+      <a data-url="https://tom2855.github.io/2021/03/07/weekly-2/" data-id="cl5gsgmcm001tnkm350wccjw5" data-title="周记 · 二  理发，从搓麻将到经商之道" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-周记-·-一-浅谈二·二四事件" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/02/27/%E5%91%A8%E8%AE%B0-%C2%B7-%E4%B8%80-%E6%B5%85%E8%B0%88%E4%BA%8C%C2%B7%E4%BA%8C%E5%9B%9B%E4%BA%8B%E4%BB%B6/" class="article-date">
+  <time class="dt-published" datetime="2021-02-27T12:03:14.000Z" itemprop="datePublished">2021-02-27</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%91%A8%E8%AE%B0/">周记</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/02/27/%E5%91%A8%E8%AE%B0-%C2%B7-%E4%B8%80-%E6%B5%85%E8%B0%88%E4%BA%8C%C2%B7%E4%BA%8C%E5%9B%9B%E4%BA%8B%E4%BB%B6/">周记 · 一   浅谈“二·二四事件”</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>寒假后开学的第一周就这么“平淡无奇”地过去了，完成了一切例行公事，坐下来谈谈这一周的一件大事。</p>
+<p>周五，马晨源神秘兮兮地过来跟我说，师鸣泽死了。师鸣泽是我编程班的同学，我当时还以为他在开玩笑，以为他这次又考差了什么的。他越说越认真，我就自己到17班看了一下。没想到班上真的有一个座位空着，同学也都阴沉着脸，一幅心事重重的样子。</p>
+<p>基本上是没错了，我也没敢问，悻悻回去了，又去问了问朱荣骐，他便喊上一群人，把他从马英伦口中听到的一切转述给了我们。</p>
+<p>事情是这样的，2021年2月24日晚上放学后，也就是进门考考完的那个晚上，他和他父亲一起回家。他家住得离学校并不远，在国宾一号，很近，走几步的事情，所以他就和他父亲一起回去。两个人校门口遇到之后，他对他父亲说他先走一步，父亲于是在后面走着，很快，儿子便消失在父亲的视野中。</p>
+<p>父亲到家后，发现他并不在家中，四处打听无果，最后发现他坠楼而亡。</p>
+<p><img src="https://tom-blog-1303702817.file.myqcloud.com/2021/02/weekly-1-1-1024x433.jpg"></p>
+<p>事发小区 （图源：百度）</p>
+<p>听完这个消息很震惊，好好的人说没就没，很是感慨。但动机呢？</p>
+<p>不知道。</p>
+<p>后来他的同桌公开发声，纪念这位永远青春的少年。</p>
+<p>据说他是个直性子，做人做事比较直，可能受不了刺激，导致了这种后果。</p>
+<p>学习原因？他的成绩基本在年级前50，稳稳的省泰中。</p>
+<p>情感原因？家庭原因？精神原因？</p>
+<p>这一切，只能等待时间来验证了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://tom2855.github.io/2021/02/27/%E5%91%A8%E8%AE%B0-%C2%B7-%E4%B8%80-%E6%B5%85%E8%B0%88%E4%BA%8C%C2%B7%E4%BA%8C%E5%9B%9B%E4%BA%8B%E4%BB%B6/" data-id="cl5gsgmd0002cnkm3fg2sgm9d" data-title="周记 · 一   浅谈“二·二四事件”" class="article-share-link">Teilen</a>
       
       
       
@@ -624,7 +620,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/">&laquo; zurück</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">weiter &raquo;</a>
   </nav>
 
 </section>
@@ -633,7 +629,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
+    <h3 class="widget-title">Kategorien</h3>
     <div class="widget">
       <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/uncategorized/">uncategorized</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/">信息技术</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%91%A8%E8%AE%B0/">周记</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BC%AB%E7%94%BB/">漫画</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/">生活记录</a></li></ul>
     </div>
@@ -662,9 +658,9 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a></li></ul>
     </div>
   </div>
 
@@ -672,13 +668,9 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">letzter Beitrag</h3>
     <div class="widget">
       <ul>
-        
-          <li>
-            <a href="/2022/07/11/hello-world/">Hello World</a>
-          </li>
         
           <li>
             <a href="/2021/06/25/domain-tomzi-net/">域名tomzi.net投入使用</a>
@@ -694,6 +686,10 @@
         
           <li>
             <a href="/2021/05/18/enable-cmcc-ipv6/">移动家宽IPv6开启及配置实录</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/16/%E4%B9%90%E9%98%9F%E6%97%A5%E8%AE%B0-%C2%B7-%E4%BA%8C-%E7%BB%84%E7%BB%87%E9%97%AE%E9%A2%98%E5%A4%A7%E4%BA%8E%E6%8A%80%E6%9C%AF%E9%97%AE%E9%A2%98/">乐队日记 · 二    组织问题大于技术问题</a>
           </li>
         
       </ul>
